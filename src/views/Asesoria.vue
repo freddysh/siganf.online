@@ -230,6 +230,7 @@ export default {
   }),
   computed: {
     ...mapGetters({
+      endpoint: 'user/endpoint',
       usuarioLogeado: 'user/usuarioLogeado',
     })
   },
@@ -241,7 +242,7 @@ export default {
   methods: {
     async listarDre() {
       try {
-        let rpt = await axios.get(`http://asesoria2.test/api/v1/dre`);
+        let rpt = await axios.get(`${this.endpoint}/api/v1/dre`);
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.id,
           nombre: res.nombre
@@ -253,7 +254,7 @@ export default {
     },
     async listarUgel() {
       try {
-        let rpt = await axios.get(`http://asesoria2.test/api/v1/ugel/1`);
+        let rpt = await axios.get(`${this.endpoint}/api/v1/ugel/1`);
         // console.log(rpt.data);
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.id,
@@ -267,7 +268,7 @@ export default {
     },
     async listarColegios() {
       try {
-        let rpt = await axios.get(`http://asesoria2.test/api/v1/iiee/${this.usuarioLogeado}`);
+        let rpt = await axios.get(`${this.endpoint}/api/v1/iiee/${this.usuarioLogeado}`);
         // console.log(rpt.data);
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.iiee.id,
@@ -282,7 +283,7 @@ export default {
     async filtrar() {
       try {
         this.loader = !this.loader;
-        let rpt = await axios.post('http://asesoria2.test/api/v1/asesoria', this.form);
+        let rpt = await axios.post(`${this.endpoint}/api/v1/asesoria`, this.form);
         console.log(rpt);
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.id,
@@ -334,7 +335,7 @@ export default {
     },
     async eliminar(asesoria_id) {
       try {
-        let rpt = await axios.get(`http://asesoria2.test/api/v1/asesoria/${asesoria_id}/delete`);
+        let rpt = await axios.get(`${this.endpoint}/api/v1/asesoria/${asesoria_id}/delete`);
         console.log(rpt);
         if (rpt.data == true) {
           const index = this.asesorias.findIndex(asesoria_ => asesoria_.id === asesoria_id);

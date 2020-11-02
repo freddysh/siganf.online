@@ -896,7 +896,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      //   asesoria_id: 'user/asesoria_id'
+      endpoint: 'user/endpoint',
     }),
     estado() {
       return this.asesoria.estado ? 'Enviado' : 'Registrado'
@@ -914,7 +914,7 @@ export default {
     async traerDia() {
       try {
         // Procesamos los grados del colegio
-        let rpt1 = await axios.get(`http://asesoria2.test/api/v1/dia/show/${this.diaid}`);
+        let rpt1 = await axios.get(`${this.endpoint}/api/v1/dia/show/${this.diaid}`);
         console.log('dia a editar', rpt1);
         let rpt_procesada1 = await rpt1.data.map(res => ({
           dia_id: this.diaid,
@@ -975,7 +975,7 @@ export default {
     async MostrarGrados() {
       try {
         // Procesamos los grados del colegio
-        let rpt1 = await axios.get(`http://asesoria2.test/api/v1/grados/${this.iieeid}/${this.form.nivel_educativo}`);
+        let rpt1 = await axios.get(`${this.endpoint}/api/v1/grados/${this.iieeid}/${this.form.nivel_educativo}`);
 
         let rpt_procesada1 = await rpt1.data.map(res => ({
           id: res.id,
@@ -991,7 +991,7 @@ export default {
     },
     async mostrarAsesoria() {
       try {
-        let rpt = await axios.get(`http://asesoria2.test/api/v1/asesoria/${this.asesoria_id}`);
+        let rpt = await axios.get(`${this.endpoint}/api/v1/asesoria/${this.asesoria_id}`);
         console.log('rpt', rpt.data)
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.id,
@@ -1013,7 +1013,7 @@ export default {
     // async mostrar_grados() {
     //   try {
     //     // Procesamos los grados del colegio
-    //     let rpt1 = await axios.get(`http://asesoria2.test/api/v1/iiee/${this.userid}/${this.iieeid}/grados`);
+    //     let rpt1 = await axios.get(`${this.endpoint}/api/v1/iiee/${this.userid}/${this.iieeid}/grados`);
 
     //     let rpt_procesada1 = await rpt1.data.map(res => ({
     //       id: res.id,
@@ -1027,7 +1027,7 @@ export default {
     // },
     async listarAreaCurricular() {
       try {
-        let rpt = await axios.get(`http://asesoria2.test/api/v1/area-curricular/${this.form.nivel_educativo}`);
+        let rpt = await axios.get(`${this.endpoint}/api/v1/area-curricular/${this.form.nivel_educativo}`);
         // console.log(rpt.data);
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.id,
@@ -1047,7 +1047,7 @@ export default {
         if (this.diaid > 0)
           mensaje = 'editados';
         this.$refs.form1.validate()
-        let rpt = await axios.post('http://asesoria2.test/api/v1/dia/store', this.form);
+        let rpt = await axios.post(`${this.endpoint}/api/v1/dia/store`, this.form);
         console.log('respuest:', rpt.data);
         this.$swal.fire('Datos guardados correctamente')
         if (rpt.data) {

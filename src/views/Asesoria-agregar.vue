@@ -177,6 +177,7 @@ export default {
   computed: {
     ...mapGetters({
       usuarioLogeado: 'user/usuarioLogeado',
+      endpoint: 'user/endpoint',
     })
   },
   created() {
@@ -187,7 +188,7 @@ export default {
   methods: {
     async listarDre() {
       try {
-        let rpt = await axios.get(`http://asesoria2.test/api/v1/dre`);
+        let rpt = await axios.get(`${this.endpoint}/api/v1/dre`);
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.id,
           nombre: res.nombre
@@ -199,7 +200,7 @@ export default {
     },
     async listarUgel() {
       try {
-        let rpt = await axios.get(`http://asesoria2.test/api/v1/ugel/1`);
+        let rpt = await axios.get(`${this.endpoint}/api/v1/ugel/1`);
         // console.log(rpt.data);
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.id,
@@ -213,7 +214,7 @@ export default {
     },
     async listarColegios() {
       try {
-        let rpt = await axios.get(`http://asesoria2.test/api/v1/iiee/${this.usuarioLogeado}`);
+        let rpt = await axios.get(`${this.endpoint}/api/v1/iiee/${this.usuarioLogeado}`);
         // console.log(rpt.data);
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.iiee.id,
@@ -227,7 +228,7 @@ export default {
     },
     async mostrar_docentes() {
       try {
-        let rpt = await axios.get(`http://asesoria2.test/api/v1/iiee/${this.usuarioLogeado}/${this.form.iiee_id}/docentes`);
+        let rpt = await axios.get(`${this.endpoint}/api/v1/iiee/${this.usuarioLogeado}/${this.form.iiee_id}/docentes`);
         console.log(rpt.data);
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.user.id,
@@ -243,7 +244,7 @@ export default {
     },
     async crearAsesoria() {
       try {
-        let rpt = await axios.post(`http://asesoria2.test/api/v1/asesoria/store`, this.form);
+        let rpt = await axios.post(`${this.endpoint}/api/v1/asesoria/store`, this.form);
         console.log(rpt.data);
         localStorage.setItem('asesoria_id', rpt.data);
         this.form.asesoria_id = rpt.data;

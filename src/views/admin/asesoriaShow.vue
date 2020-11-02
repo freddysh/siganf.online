@@ -83,6 +83,9 @@
 
 <script>
 import axios from "axios";
+import {
+  mapGetters
+} from 'vuex'
 export default {
   props: [],
   data() {
@@ -108,12 +111,15 @@ export default {
   computed: {
     estado() {
       return this.asesoria.estado ? 'Enviado' : 'Registrado'
-    }
+    },
+    ...mapGetters({
+      endpoint: 'user/endpoint',
+    })
   },
   methods: {
     async LlamarDatos() {
       try {
-        let rpt = await axios.get(`http://asesoria2.test/api/v1/asesoria/${this.asesoria_id}`);
+        let rpt = await axios.get(`${this.endpoint}/api/v1/asesoria/${this.asesoria_id}`);
         console.log('rpt', rpt.data)
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.id,
@@ -159,7 +165,7 @@ export default {
     },
     async eliminar(eliminar_dia_id) {
       try {
-        let rpt = await axios.get(`http://asesoria2.test/api/v1/dia/${eliminar_dia_id}/delete`);
+        let rpt = await axios.get(`${this.endpoint}/api/v1/dia/${eliminar_dia_id}/delete`);
         console.log(rpt);
         if (rpt.data == true) {
           const index = this.asesoria.dias.findIndex(dias_ => dias_.id === eliminar_dia_id);

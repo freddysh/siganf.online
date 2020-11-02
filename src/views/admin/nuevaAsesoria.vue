@@ -26,6 +26,7 @@ export default {
   computed: {
     ...mapGetters({
       usuarioLogeado: 'user/usuarioLogeado',
+      endpoint: 'user/endpoint',
     })
   },
   created() {
@@ -34,7 +35,7 @@ export default {
   methods: {
     async LlamarDatos() {
       try {
-        let rpt = await axios.get(`http://asesoria2.test/api/v1/asesoria/${this.asesoria_id}`);
+        let rpt = await axios.get(`${this.endpoint}/api/v1/asesoria/${this.asesoria_id}`);
         console.log('rpt', rpt.data[0].iiee_id)
         this.iiee_id = rpt.data[0].iiee_id;
         if (this.diaid > 0)
