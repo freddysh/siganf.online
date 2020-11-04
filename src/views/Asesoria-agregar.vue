@@ -46,7 +46,7 @@
                       <v-btn block color="green" dark @click="crearAsesoria()">Crear asesoria</v-btn>
                     </v-col>
                   </v-row>
-                  <NuevoDia v-if="form.asesoria_id>0" :iieeid='form.iiee_id' :dia='1' :userid='form.acompanante_id' :hayvisita='form.hay_visita' :diaid='diaid' />
+                  <NuevoDia v-if="form.asesoria_id>0" :asesoriaid='form.asesoria_id' :iieeid='form.iiee_id' :dia='1' :userid='form.acompanante_id' :hayvisita='form.hay_visita' :diaid='diaid' />
                 </v-container>
               </v-col>
             </v-row>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <NuevoDia :iieeid='iiee_id' :dia='dia' :userid='acompanante_id' :hayvisita='1' :diaid='diaid' />
+    <NuevoDia :asesoriaid='asesoria_id' :iieeid='iiee_id' :dia='dia' :userid='acompanante_id' :hayvisita='1' :diaid='diaid' />
   </div>
 </template>
 

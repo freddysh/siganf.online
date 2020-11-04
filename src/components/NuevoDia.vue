@@ -299,7 +299,7 @@
                   </v-row>
                 </v-col>
                 <v-btn v-if="diaid==0" block color="green" dark type="submit">
-                  <v-icon>mdi-send</v-icon> Crear Dia
+                  <v-icon>mdi-send</v-icon> Crear Dia {{dia}}
                 </v-btn>
                 <v-btn v-if="diaid>0" block color="warning" dark type="submit">
                   <v-icon>mdi-pencil</v-icon> Editar Dia {{dia}}
@@ -320,7 +320,7 @@ import {
   mapGetters
 } from 'vuex'
 export default {
-  props: ['dia', 'iieeid', 'userid', 'hayvisita', 'diaid'],
+  props: ['dia', 'iieeid', 'userid', 'hayvisita', 'diaid', 'asesoriaid'],
   data() {
     return {
       valid: false,
@@ -347,7 +347,7 @@ export default {
       }],
       form: {
         dia_id: this.diaid,
-        dia_: this.dia || 0,
+        dia_: this.dia,
         fecha: new Date().toISOString().substr(0, 10),
         menu: false,
         modal: false,
@@ -363,7 +363,7 @@ export default {
         obs_p_17: ' ',
         area_curricular: [],
         grados: [],
-        asesoria_id: this.$route.params.asesoria_id || null,
+        asesoria_id: this.asesoriaid,
         nivel_educativo: ' ',
         p_18: [],
         obs_p_18: ' ',
@@ -793,14 +793,17 @@ export default {
         ]
       },
       asesoria: {
+        id: 0,
         anio: ' ',
         mes: ' ',
-        iiee: ' ',
+        constancia_nro: ' ',
+        fecha_envio: ' ',
+        estado: ' ',
+        hay_visita: ' ',
         docente: ' ',
-        fecha_registro: ' ',
-        estado: 0,
+        dias: ' ',
+        iiee: 0
       },
-      asesoria_id: this.$route.params.asesoria_id || null,
       opciones: [{
         nro: 0,
         nombre: 'Opcion'
@@ -935,7 +938,6 @@ export default {
           obs_p_17: res.obs_p_16,
           area_curricular: res.area_curriculares.map(res2 => res2.area_curricular_id),
           grados: res.grados.map(res2 => res2.grado_id),
-          asesoria_id: this.$route.params.asesoria_id || null,
           p_18: res.p_18.map(res2 => res2.opcion),
           obs_p_18: res.obs_p_18,
           p_19: res.p_19,
@@ -991,8 +993,8 @@ export default {
     },
     async mostrarAsesoria() {
       try {
-        let rpt = await axios.get(`${this.endpoint}/api/v1/asesoria/${this.asesoria_id}`);
-        console.log('rpt', rpt.data)
+        let rpt = await axios.get(`${this.endpoint}/api/v1/asesoria/${this.form.asesoria_id}`);
+        console.log('rpt constancia', rpt.data)
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.id,
           anio: res.anio,
@@ -1059,7 +1061,7 @@ export default {
           this.$router.push({
             name: 'asesorias.show',
             params: {
-              'asesoria_id': this.asesoria_id
+              'asesoria_id': this.form.asesoria_id
             }
           })
         } else {
