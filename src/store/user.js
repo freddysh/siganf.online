@@ -6,7 +6,7 @@ export default {
     state:{
         username:localStorage.getItem('usuarioLogeadoName')||null,
         usuarioLogeado:localStorage.getItem('usuarioLogeado')||null,
-        endpoint1:'https://api.siganf.online' || null
+        endpoint1:'http://api.siganf.online' || null
     },
     actions:{
         async getUser({commit},id){
@@ -16,7 +16,7 @@ export default {
         async login({commit},credenciales){
             try {
                 // Procesamos los grados del colegio
-                let rpt1 = await axios.get(`https://api.siganf.online/api/v1/login/${credenciales.txt_user.trim()}/${credenciales.txt_pw.trim()}`);
+                let rpt1 = await axios.get(`http://api.siganf.online/api/v1/login/${credenciales.txt_user.trim()}/${credenciales.txt_pw.trim()}`);
                 if (rpt1.data.length) {
                   let user = await rpt1.data.map(rep => ({
                     id: rep.id,
