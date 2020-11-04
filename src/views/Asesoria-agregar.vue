@@ -2,24 +2,22 @@
   <div>
     <v-row>
       <v-col cols="12">
-        <v-breadcrumbs :items="items" class=" py-1">
+        <v-breadcrumbs :items="breadcrumbs" class=" py-0">
           <template v-slot:divider>
             <v-icon>mdi-forward</v-icon>
           </template>
         </v-breadcrumbs>
-
-        <v-divider></v-divider>
       </v-col>
       <v-col cols="12" class="px-3">
-        <v-card elevation="3" outlined>
-          <v-card-title>
-            <h3 class="red--text">Nueva asesoria</h3>
-          </v-card-title>
-          <v-divider></v-divider>
-          <v-card-text>
-            <v-row>
-              <v-col cols="12" sm="12">
-                <v-container>
+        <v-container>
+          <v-card elevation="3" outlined>
+            <v-card-title>
+              <h3 class="primary--text">Nueva asesoria</h3>
+            </v-card-title>
+            <v-card-text>
+              <v-row>
+                <v-col cols="12" sm="12">
+
                   <v-row v-if="form.asesoria_id==0">
                     <v-col cols="6" sm='6' md="1">
                       <v-select :items="anios" label="Año" v-model="form.anio"></v-select>
@@ -47,11 +45,12 @@
                     </v-col>
                   </v-row>
                   <NuevoDia v-if="form.asesoria_id>0" :asesoriaid='form.asesoria_id' :iieeid='form.iiee_id' :dia='1' :userid='form.acompanante_id' :hayvisita='form.hay_visita' :diaid='diaid' />
-                </v-container>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
+
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-container>
       </v-col>
     </v-row>
 
@@ -71,7 +70,7 @@ export default {
   data: () => ({
     diaid: 0,
     user_id: 1,
-    items: [{
+    breadcrumbs: [{
         text: 'Inicio',
         disabled: false,
         href: '',
@@ -259,7 +258,6 @@ export default {
         //     asesoaria_id: rpt.data
         //   }
         // });
-
       } catch (error) {
         console.log(error);
       }
