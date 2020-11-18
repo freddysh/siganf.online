@@ -9,7 +9,7 @@
         </v-breadcrumbs>
       </v-col>
       <v-col cols="12" class="px-3">
-        <v-container>
+        <v-container fluid>
           <v-card elevation="3" outlined>
             <v-card-title>
               <h3 class="primary--text">Nueva asesoria</h3>

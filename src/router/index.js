@@ -17,6 +17,11 @@ const routes = [
     name: 'admin',
     component: () => import( '../views/admin/Admin.vue'),
     meta:{requiresAuth:true}
+  },{
+    path: '/iiees',
+    name: 'iiees',
+    component: () => import( '../views/admin/iiee/index.vue'),
+    meta:{requiresAuth:true}
   }
 
 //   ,

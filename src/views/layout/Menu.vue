@@ -32,20 +32,12 @@ export default {
       abr: 'Man',
       color: 'green',
       items: [{
-          title: 'Agregar Docentes',
-          link: '/docentes'
+          title: 'Iiees',
+          link: '/iiees'
         },
         {
-          title: 'Agregar Asesor',
+          title: 'Asesores',
           link: '/asesores'
-        },
-        {
-          title: 'Agregar Colegio',
-          link: '/colegios'
-        },
-        {
-          title: 'Agregar Asignatura',
-          link: '/asignaturas'
         },
       ]
     }, {
