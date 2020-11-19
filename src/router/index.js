@@ -22,6 +22,26 @@ const routes = [
     name: 'iiees',
     component: () => import( '../views/admin/iiee/index.vue'),
     meta:{requiresAuth:true}
+  },{
+    path: '/iiees/:iiee_id/grados',
+    name: 'iiees.grados',
+    component: () => import( '../views/admin/iiee/grado/index.vue'),
+    meta:{requiresAuth:true}
+  },{
+    path: '/iiees/:iiee_id/docentes',
+    name: 'iiees.docentes',
+    component: () => import( '../views/admin/iiee/docente/index.vue'),
+    meta:{requiresAuth:true}
+  },{
+    path: '/asesores',
+    name: 'asesores',
+    component: () => import( '../views/admin/asesor/index.vue'),
+    meta:{requiresAuth:true}
+  },{
+    path: '/asesores/:asesor_id/iiees',
+    name: 'asesores.iiees',
+    component: () => import( '../views/admin/asesor/iiee/index.vue'),
+    meta:{requiresAuth:true}
   }
 
 //   ,

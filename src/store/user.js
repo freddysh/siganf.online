@@ -6,7 +6,8 @@ export default {
     state:{
         username:localStorage.getItem('usuarioLogeadoName')||null,
         usuarioLogeado:localStorage.getItem('usuarioLogeado')||null,
-        endpoint1:'http://api.siganf.test' || null
+        usuarioRol:localStorage.getItem('usuarioRol')||null,
+        endpoint1:'http://api.siganf.online' || null
     },
     actions:{
         async getUser({commit},id){
@@ -16,19 +17,22 @@ export default {
         async login({commit},credenciales){
             try {
                 // Procesamos los grados del colegio
-                let rpt1 = await axios.get(`http://api.siganf.test/api/v1/login/${credenciales.txt_user.trim()}/${credenciales.txt_pw.trim()}`);
+                let rpt1 = await axios.get(`http://api.siganf.online/api/v1/login/${credenciales.txt_user.trim()}/${credenciales.txt_pw.trim()}`);
                 if (rpt1.data.length) {
                   let user = await rpt1.data.map(rep => ({
                     id: rep.id,
-                    nombre: rep.name
+                    nombre: rep.name,
+                    rol: rep.rol
                   }));
                     console.log('user', user);
                     const usuarioLogeado=user[0].id;
                     localStorage.setItem('usuarioLogeado',usuarioLogeado);
                     localStorage.setItem('usuarioLogeadoName',user[0].nombre);
+                    localStorage.setItem('usuarioRol',user[0].rol);
 
                     commit('setUsuarioLogeado',usuarioLogeado);
                     commit('setUserName',user[0].nombre);
+                    commit('setUserRol',user[0].rol);
                 //   auth.setUserLoged(user);
                 //   this.$router.push({
                 //     name: 'Admin'
@@ -47,8 +51,10 @@ export default {
         logout({commit}){
             localStorage.removeItem('usuarioLogeado');
             localStorage.removeItem('usuarioLogeadoName');
+            localStorage.removeItem('usuarioRol');
             commit('setUsuarioLogeado',null);
             commit('setUserName',null);
+            commit('setUserRol',null);
 
         }
     },
@@ -62,6 +68,9 @@ export default {
         setUserName(state,valor){
             state.username=valor;
         },
+        setUserRol(state,valor){
+            state.usuarioRol=valor;
+        },
     }
     ,getters:{
         // title(state){
@@ -69,6 +78,7 @@ export default {
         // }
         username:state=>state.username,
         usuarioLogeado:state=>state.usuarioLogeado,
+        usuarioRol:state=>state.usuarioRol,
         endpoint:state=>state.endpoint1
     }
 }

@@ -1,13 +1,13 @@
 <template>
   <div>
     <v-row>
-      <v-col class="d-flex justify-center align-center">
+      <v-col class="justify-center d-flex align-center">
         <v-menu v-for="(modulo,i) in modulos" :key="i">
           <template v-slot:activator="{ on, attrs }">
-            <b class="mx-0 d-flex d-sm-none mx-1" :color="modulo.color" dark v-bind="attrs" v-on="on">
+            <b class="mx-0 mx-1 d-flex d-sm-none" :color="modulo.color" dark v-bind="attrs" v-on="on">
               {{ modulo.abr }}
             </b>
-            <b class="d-none d-sm-flex mx-1" :color="modulo.color" dark v-bind="attrs" v-on="on">
+            <b class="mx-1 d-none d-sm-flex" :color="modulo.color" dark v-bind="attrs" v-on="on">
               {{ modulo.titulo }}
             </b>
           </template>
@@ -25,22 +25,12 @@
 </template>
 
 <script>
+import {
+  mapGetters,
+} from 'vuex'
 export default {
   data: () => ({
-    modulos: [{
-      titulo: "Mantenimiento",
-      abr: 'Man',
-      color: 'green',
-      items: [{
-          title: 'Iiees',
-          link: '/iiees'
-        },
-        {
-          title: 'Asesores',
-          link: '/asesores'
-        },
-      ]
-    }, {
+    modulos: [ {
       titulo: "Ejecucion",
       abr: 'Eje',
       color: 'info',
@@ -57,6 +47,34 @@ export default {
         link: '/resprtes1'
       }]
     }],
-  })
+  }),
+  computed: {
+    ...mapGetters({
+      usuarioRol: 'user/usuarioRol'
+    })
+  },
+  methods: {
+    verificarRol(){
+    let item={
+      titulo: "Mantenimiento",
+      abr: 'Man',
+      color: 'green',
+      items: [{
+          title: 'Iiees',
+          link: '/iiees'
+        },
+        {
+          title: 'Asesores',
+          link: '/asesores'
+        },
+      ]
+    };
+    this.modulos.unshift(item);
+    }
+  },
+  created() {
+      if(this.usuarioRol=='admin')
+        this.verificarRol();
+  },
 }
 </script>

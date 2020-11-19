@@ -45,7 +45,8 @@ export default {
   computed: {
     ...mapGetters({
       usuarioLogeado: 'user/usuarioLogeado',
-      username: 'user/username'
+      username: 'user/username',
+      usuarioRol: 'user/usuarioRol'
     })
   },
   data() {

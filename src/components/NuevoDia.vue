@@ -127,10 +127,10 @@
                                 <th class="text-left">
                                   Aspectos
                                 </th>
-                                <th class="text-left">
-                                  Seleccione segun los aspectos
+                                <th class="text-left" style="width:180px">
+                                  Seleccione segun los aspectos1
                                 </th>
-                                <th class="text-left">
+                                 <th class="text-left" style="width:250px">
                                   Compromisos
                                 </th>
                               </tr>
@@ -217,10 +217,10 @@
                                 <th class="text-left">
                                   Opción 4
                                 </th>
-                                <th class="text-left">
+                                <th class="text-left" style="width:140px">
                                   Respuesta
                                 </th>
-                                <th class="text-left">
+                                <th class="text-left" style="width:250px">
                                   Observación
                                 </th>
                               </tr>
