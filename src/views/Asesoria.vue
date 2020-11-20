@@ -302,7 +302,7 @@ export default {
           anio: res.anio,
           mes: res.mes,
           docente: res.docente ? res.docente.name : null,
-          codigo_modular: res.iiee ? res.iiee.codigo : null,
+          codigo_modular: res.iiee ? res.iiee.codigo_modular : null,
           iiee: res.iiee ? res.iiee.nombre : null,
           fecha_ejecutada: res.fecha_envio,
           estado: res.estado,

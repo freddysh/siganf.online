@@ -231,7 +231,7 @@ export default {
         console.log(rpt.data);
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.user.id,
-          dni: res.user.id,
+          dni: res.user.dni,
           nombre: res.user.id + ' ' + res.user.name,
           area_especializacion: res.area_especializacion,
           nivel_educativo: res.iiee.nivel,
