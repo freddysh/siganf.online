@@ -45,21 +45,21 @@
               </v-col>
               <v-col cols="12" sm="8">
                 <v-row>
-                  <v-col cols="12" class="my-0 py-0">
+                  <v-col cols="12" class="py-0 my-0">
                     <v-row>
                       <v-col cols="12" sm="12" md="8">
                         <h2>Relacion de asesorias</h2>
                       </v-col>
                       <v-col cols="12" sm="12" md="4" class="text-rigth">
                         <v-btn color="green" class="ma-2 white--text" @click="ruta('asesorias.agregar')">
-                          <v-icon right dark>
-                            mdi-plus
+                          <v-icon >
+                            mdi-plus-circle
                           </v-icon> Agregar asesoria
                         </v-btn>
                       </v-col>
                     </v-row>
                   </v-col>
-                  <v-col cols="12" class="my-0 py-0">
+                  <v-col cols="12" class="py-0 my-0">
                     <v-skeleton-loader v-if="loader" v-bind="attrs" type="table-heading, list-item-two-line, image, table-tfoot"></v-skeleton-loader>
                     <v-simple-table v-if="!loader" dense>
                       <template v-slot:default>
@@ -68,25 +68,28 @@
                             <th class="text-left white--text">
                               #
                             </th>
-                            <th class="text-left  white--text">
+                            <th class="text-left white--text">
                               Año
                             </th>
-                            <th class="text-left  white--text">
+                            <th class="text-left white--text">
                               Mes
                             </th>
-                            <th class="text-left  white--text">
-                              Docente
-                            </th>
-                            <th class="text-left  white--text">
-                              Codigo modular
-                            </th>
-                            <th class="text-left  white--text">
-                              Iiee
-                            </th>
-                            <th class="text-left  white--text">
+                            <th class="text-left white--text">
                               Fecha ejecutada
                             </th>
-                            <th class="text-left  white--text">
+                            <th class="text-left white--text">
+                              Docente
+                            </th>
+                            <th class="text-left white--text">
+                              Codigo modular
+                            </th>
+                            <th class="text-left white--text">
+                              Iiee
+                            </th>
+                            <th class="text-left white--text">
+                              Estado
+                            </th>
+                            <th class="text-left white--text">
                               Operaciones
                             </th>
                           </tr>
@@ -96,10 +99,13 @@
                             <td>{{ i+1 }}</td>
                             <td>{{ item.anio }}</td>
                             <td>{{ item.mes }}</td>
+                            <td>{{ item.fecha_ejecutada }}</td>
                             <td>{{ item.docente }}</td>
                             <td>{{ item.codigo_modular }}</td>
                             <td>{{ item.iiee }}</td>
-                            <td>{{ item.fecha_ejecutada }}</td>
+                            <td>
+                                <v-chip :color="item.estado==0?'warning':'green'">{{item.estado==0? 'Resgistrado':'Enviado' }}</v-chip>
+                            </td>
                             <!--<td>
                               <v-chip v-if="item.estado==0" class="ma-2" color="primary" text-color="white">
                                 Registrado
@@ -110,12 +116,12 @@
                             </td>-->
                             <td>
                               <v-btn-toggle v-model="icon" borderless>
-                                <v-btn class="mx-0" dark small color="primary" @click="asesoriaShow(item.id)">
+                                <v-btn class="mx-0" dark small :color="item.estado==0?'primary':'warning'" @click="asesoriaShow(item.id)">
                                   <v-icon dark color="white">
-                                    mdi-eye
-                                  </v-icon> ({{ item.dias }} Dias) Ver
+                                     {{item.estado==0?'mdi-eye':'mdi-pencil'}}
+                                  </v-icon> ({{ item.dias }} Dias) {{item.estado==0?'Ver':'Modificar'}}
                                 </v-btn>
-                                <v-btn v-if="item.estado==0" class="mx-0" dark small color="green" @click="confir_enviar(item.id)">
+                                <v-btn v-if="false" class="mx-0" dark small color="green" @click="confir_enviar(item.id)">
                                   <v-icon dark color="white">
                                     mdi-cube-send
                                   </v-icon>
@@ -176,6 +182,9 @@ export default {
     ],
     anios: [2019, 2020, 2021, 2022],
     meses: [{
+      nro: -1,
+      nombre: 'Todos los meses'
+    },{
       nro: 1,
       nombre: 'Enero'
     }, {
@@ -220,11 +229,11 @@ export default {
       nro: 1,
       nombre: 'UNIDAD DE GESTION EDUCATIVA LOCAL'
     }],
-    iiees: [{
-      id: 1,
-      nombre: 'COLEGIO X'
-    }],
+    iiees: [],
     estados: [{
+      nro: -1,
+      nombre: 'Todos'
+    }, {
       nro: 0,
       nombre: 'Registrado'
     }, {
@@ -235,9 +244,10 @@ export default {
     form: {
       anio: new Date().getFullYear(),
       mes: new Date().getMonth() + 1,
-      estado: 0,
-      acompanante_id: 1,
-      iiee_id: 0
+      estado: -1,
+      acompanante_id:0,
+      iiee_id: -1,
+      user_id:0
     }
   }),
   computed: {
@@ -281,12 +291,14 @@ export default {
     async listarColegios() {
       try {
         let rpt = await axios.get(`${this.endpoint}/api/v1/iiee/${this.usuarioLogeado}`);
-        // console.log(rpt.data);
+         console.log(rpt.data);
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.iiee.id,
           nombre: res.iiee.nombre
         }));
-        this.iiees = rpt_procesada;
+        this.iiees=rpt_procesada;
+        let todos= {id:-1,nombre:'TODAS LAS IIEES'};
+        this.iiees.unshift(todos);
         // console.log(rpt_procesada);
       } catch (error) {
         console.log(error);
@@ -295,8 +307,9 @@ export default {
     async filtrar() {
       try {
         this.loader = !this.loader;
+        this.form.acompanante_id= this.usuarioLogeado;
         let rpt = await axios.post(`${this.endpoint}/api/v1/asesoria`, this.form);
-        // console.log('rpt filtro:', rpt);
+        console.log('rpt filtro:', rpt);
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.id,
           anio: res.anio,

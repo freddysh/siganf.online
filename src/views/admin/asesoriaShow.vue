@@ -3,7 +3,13 @@
     <v-container>
       <v-card elevation="2" outlined tile>
         <v-card-title>
-          <h3 color="primary">Asesoria</h3>
+          <v-row>
+          <v-col >
+          <h3 color="primary">Asesoria</h3></v-col>
+          <v-col align="right">
+          <v-btn color="secondary" dark @click="regresar()"><v-icon>mdi-skip-previous</v-icon> Atras</v-btn>
+          </v-col>
+          </v-row>
         </v-card-title>
         <v-card-text>
           <p><b class="primary--text">
@@ -24,7 +30,7 @@
             |
             <b class="primary--text">
               <v-icon :class="asesoria.estado?'primary--text':'secondary--text'">mdi-email-send</v-icon> Estado
-            </b>{{ estado }}
+            </b><b :class="asesoria.estado?'green--text':'secondary--text'">{{  estado  }}</b>
           </p>
           <p>
             <b class="primary--text">
@@ -42,15 +48,20 @@
               </v-btn>
             </v-col>
             <v-col cols="12">
-              <v-simple-table fixed-header height="300px" dense>
+              <v-simple-table fixed-header height="auto" dense>
                 <template v-slot:default>
                   <thead>
                     <tr>
+                    <th class="text-left">Marcar
+                      </th>
                       <th class="text-left">
                         Dia
                       </th>
                       <th class="text-left">
-                        Fecha
+                        Fecha, duración
+                      </th>
+                      <th class="text-left">
+                        Estado
                       </th>
                       <th class="text-left">
                         Operaciones
@@ -59,8 +70,24 @@
                   </thead>
                   <tbody>
                     <tr v-for="item in asesoria.dias" :key="item.name">
+                    <td>
+                    <v-checkbox
+                    v-model="lista_a_enviar"
+                    label=""
+                    color="success"
+                    :value="item.id"
+                    hide-details
+                    ></v-checkbox>
+                    </td>
                       <td># {{ item.dia }}</td>
-                      <td>{{ item.fecha }} [{{ item.hora_inicio }} - {{ item.hora_fin }}]</td>
+                      <td>{{ item.fecha }}, {{ item.hora_duracion }}</td>
+                      <td>
+                      <v-chip v-if="item.estado==0"
+                        color="warning"
+                        >Falta enviar</v-chip>
+                        <v-chip v-if="item.estado==1"
+                        color="green"
+                        >Enviado</v-chip></td>
                       <td>
                         <v-btn dark color="warning" @click="agregarAsesoria(item.id)">
                           <v-icon>mdi-pencil</v-icon>
@@ -73,6 +100,9 @@
                   </tbody>
                 </template>
               </v-simple-table>
+              <v-col>
+                <v-btn color="primary" block @click="confirm_enviar()"> <v-icon dark>mdi-send</v-icon> Enviar </v-btn>
+              </v-col>
             </v-col>
           </v-row>
         </v-card-text>
@@ -102,7 +132,9 @@ export default {
         docente: '',
         dias: [],
         iiee: []
-      }
+      },
+      lista_a_enviar:[],
+      lista:''
     }
   },
   created() {
@@ -187,6 +219,64 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    confirm_enviar(){
+        this.$swal.fire({
+        title: 'Recuerda',
+        text: "Estad seguro de enviar los "+this.lista_a_enviar.length+" dias",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Si, proceder!',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.enviar();
+        }
+      })
+    },
+    async enviar(){
+        let tam=this.lista_a_enviar.length;
+        this.lista=[];
+        for(let i=0;i<tam;i++){
+            // this.lista+=this.lista_a_enviar[i]+'_';
+            let valor={id:parseInt(this.lista_a_enviar[i])}
+            this.lista.push(valor);
+        }
+        console.log('lista a enviar:',this.lista);
+        // let datos = await axios.post(`${this.endpoint}/api/v1/asesores/${this.$route.params.asesor_id}/iiees/store`, this.editedItem);
+
+        let rpt = await axios.post(`${this.endpoint}/api/v1/dia/enviar`,this.lista);
+        console.log('respuesta:',rpt);
+        let rpt1=await rpt.data;
+        if(rpt1){
+          this.$swal.fire(
+            'Hecho!',
+            'Datos enviados correctamente.',
+            'success'
+          );
+        console.log('enviando a refrescar');
+        this.$router.go();
+        //   this.$router.push({
+        //     name: 'asesorias.show',
+        //     params: {
+        //       'asesoria_id': this.asesoria_id
+        //     }
+        //   }).catch(() => {});
+        }
+        else{
+            this.$swal.fire(
+            'Opps!',
+            'Ocurrio un error, es posible que no haya escojido ningun dia',
+            'warning'
+          );
+        }
+    }
+    ,regresar(){
+        this.$router.push({
+            name: 'Asesorias'
+          })
     }
   }
 }

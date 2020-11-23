@@ -36,7 +36,7 @@
 
                 </v-col>
                 <v-col cols="12">
-                  <h2>ASESORIA PEDAGOGICA/COMPROMISOS (DIA {{ form.dia_ }})</h2>
+                  <h2>ASESORIA PEDAGOGICA/COMPROMISOS (DIA {{ dia }})</h2>
                 </v-col>
                 <v-col cols="12">
                   <p><b>Fecha de la asesoría pedágogica</b></p>
@@ -49,7 +49,7 @@
                     <v-date-picker v-model="form.fecha" @input="form.menu2 = false"></v-date-picker>
                   </v-menu>
                 </v-col>
-                <v-col cols="6" sm='6' md="3">
+                <v-col v-if="false" cols="6" sm='6' md="3">
                   <v-menu ref="menu" v-model="form.hi_menu2" :close-on-content-click="false" :nudge-right="40" :return-value.sync="form.dia_hora_inicio_" transition="scale-transition" offset-y max-width="290px" min-width="290px">
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field v-model="form.hora_inicio" label="Hora inicio" prepend-icon="mdi-clock-time-four-outline" readonly v-bind="attrs" v-on="on"></v-text-field>
@@ -57,12 +57,20 @@
                     <v-time-picker v-if="form.hi_menu2" v-model="form.hora_inicio" full-width @click:minute="$refs.menu.save(form.dia_hora_inicio_)"></v-time-picker>
                   </v-menu>
                 </v-col>
-                <v-col cols="6" sm='6' md="3">
+                <v-col v-if="false" cols="6" sm='6' md="3">
                   <v-menu ref="menu" v-model="form.hf_menu2" :close-on-content-click="false" :nudge-right="40" :return-value.sync="form.dia_hora_fin_" transition="scale-transition" offset-y max-width="290px" min-width="290px">
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field v-model="form.hora_fin" label="Hora fin" prepend-icon="mdi-clock-time-four-outline" readonly v-bind="attrs" v-on="on"></v-text-field>
                     </template>
                     <v-time-picker v-if="form.hf_menu2" v-model="form.hora_fin" full-width @click:minute="$refs.menu.save(form.dia_hora_fin_)"></v-time-picker>
+                  </v-menu>
+                </v-col>
+                <v-col cols="6" sm='6' md="3">
+                  <v-menu ref="menu" v-model="form.hf_menu3" :close-on-content-click="false" :nudge-right="40" :return-value.sync="form.dia_hora_duracion_" transition="scale-transition" offset-y max-width="290px" min-width="290px">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field v-model="form.hora_duracion" label="Duracion" prepend-icon="mdi-clock-time-four-outline" readonly v-bind="attrs" v-on="on"></v-text-field>
+                    </template>
+                    <v-time-picker v-if="form.hf_menu3" v-model="form.hora_duracion" full-width @click:minute="$refs.menu.save(form.dia_hora_duracion_)" min="1:00" max="6:00" format="24hr"></v-time-picker>
                   </v-menu>
                 </v-col>
                 <v-col cols="4" sm='4' md="2">
@@ -84,10 +92,15 @@
                 </v-col>
 
                 <v-col cols="12">
-                  <v-btn color="primary" dark @click="dialog = true">
+                  <v-btn v-if="!competencias_guardado" color="primary" dark @click="dialog = true">
                     <v-icon large color="white">
                       mdi-plus-circle
                     </v-icon> Agregar competencias
+                  </v-btn>
+                  <v-btn v-else-if="competencias_guardado" color="warning" dark @click="dialog = true">
+                    <v-icon large color="white">
+                      mdi-pencil-circle
+                    </v-icon> Modificar competencias
                   </v-btn>
                 </v-col>
                 <v-col cols="12">
@@ -100,10 +113,15 @@
                         <v-toolbar-title>Cerrar</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
-                          <v-btn dark text @click="dialog = false">
+                          <v-btn v-if="!competencias_guardado" dark text @click="pasarModificarCompetencias()">
                             <v-icon large color="white">mdi-content-save</v-icon>
                             Guardar
                           </v-btn>
+                          <v-btn v-else-if="competencias_guardado" dark text @click="pasarModificarCompetencias()">
+                            <v-icon large color="white">mdi-pencil-circle</v-icon>
+                            Modificar
+                          </v-btn>
+
                         </v-toolbar-items>
                       </v-toolbar>
                       <v-card-text>
@@ -171,10 +189,15 @@
                   </v-col>
                 </v-row>
                 <v-col cols="12">
-                  <v-btn color="primary" dark @click="dialog1 = true">
+                  <v-btn v-if="!criterios_guardado" color="primary" dark @click="dialog1 = true">
                     <v-icon large color="white">
                       mdi-plus-circle
                     </v-icon> Agregar criterios/aspectos
+                  </v-btn>
+                  <v-btn v-else-if="criterios_guardado" color="warning" dark @click="dialog1 = true">
+                    <v-icon large color="white">
+                      mdi-edit-circle
+                    </v-icon> Modificar criterios/aspectos
                   </v-btn>
                 </v-col>
                 <v-col cols="12">
@@ -187,10 +210,14 @@
                         <v-toolbar-title>Cerrar</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
-                          <v-btn dark text @click="dialog1 = false">
+                          <v-btn v-if="!criterios_guardado" dark text @click="pasarModificarCriterios()">
                             <v-icon large color="white">mdi-content-save</v-icon>
                             Guardar
                           </v-btn>
+                            <v-btn v-else-if="criterios_guardado" dark text @click="pasarModificarCriterios()">
+                                <v-icon large color="white">mdi-pencil-circle</v-icon>
+                                Modificar
+                            </v-btn>
                         </v-toolbar-items>
                       </v-toolbar>
                       <v-card-text>
@@ -342,9 +369,9 @@ export default {
         }
       ],
       grados: [{
-        id: 1,
-        nombre: '1er Grado'
       }],
+      competencias_guardado:false,
+      criterios_guardado:false,
       form: {
         dia_id: this.diaid,
         dia_: this.dia,
@@ -352,9 +379,10 @@ export default {
         menu: false,
         modal: false,
         menu2: false,
-        hora_inicio: '11:30',
+        hora_inicio: '10:00',
         hi_menu2: false,
-        hora_fin: '11:30',
+        hora_fin: '10:0',
+        hora_duracion: '2:30',
         hf_menu2: false,
         medio_virtual: ' ',
         medio_virtual_otros: ' ',
@@ -806,7 +834,7 @@ export default {
       },
       opciones: [{
         nro: 0,
-        nombre: 'Opcion'
+        nombre: 'Seleccionar'
       }, {
         nro: 1,
         nombre: 'Compromiso 1'
@@ -819,7 +847,7 @@ export default {
       }],
       criterio_opciones: [{
         nro: 0,
-        nombre: 'Opcion'
+        nombre: 'Seleccionar'
       }, {
         nro: 1,
         nombre: 'Opción 1'
@@ -920,6 +948,7 @@ export default {
         let rpt1 = await axios.get(`${this.endpoint}/api/v1/dia/show/${this.diaid}`);
         console.log('dia a editar', rpt1);
         let rpt_procesada1 = await rpt1.data.map(res => ({
+            asesoria_id:res.asesoria_id,
           dia_id: this.diaid,
           dia_: res.dia,
           fecha: res.fecha,
@@ -930,6 +959,7 @@ export default {
           nivel_educativo: res.nivel_educativo,
           hi_menu2: false,
           hora_fin: res.hora_fin,
+          hora_duracion: res.hora_duracion,
           hf_menu2: false,
           medio_virtual: res.medio_virtual,
           medio_virtual_otros: res.medio_virtual_otros,
@@ -966,6 +996,8 @@ export default {
             opcion: res5.opcion
           }))
         }));
+        this.competencias_guardado=true,
+        this.criterios_guardado=true,
         this.form = await rpt_procesada1[0];
         this.MostrarGrados();
         console.log('se trajo el dia', rpt_procesada1);
@@ -1008,6 +1040,11 @@ export default {
           iiee: res.iiee
         }));
         this.asesoria = rpt_procesada[0];
+
+        if(this.diaid ==0){
+            this.form.nivel_educativo=this.asesoria.iiee.nivel;
+            this.MostrarGrados()
+        }
       } catch (error) {
         console.log(error);
       }
@@ -1048,6 +1085,9 @@ export default {
         let mensaje = 'guardados';
         if (this.diaid > 0)
           mensaje = 'editados';
+        else{
+            this.form.dia_= this.dia
+          }
         this.$refs.form1.validate()
         let rpt = await axios.post(`${this.endpoint}/api/v1/dia/store`, this.form);
         console.log('respuest:', rpt.data);
@@ -1104,6 +1144,14 @@ export default {
           this.EnviarDatos();
         }
       })
+    },
+    pasarModificarCompetencias(){
+        this.dialog = false;
+        this.competencias_guardado=true;
+    },
+    pasarModificarCriterios(){
+        this.dialog1 = false;
+        this.criterios_guardado=true;
     }
   }
 }

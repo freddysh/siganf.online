@@ -2,7 +2,7 @@
   <div>
     <v-row>
       <v-col cols="12">
-        <v-breadcrumbs :items="breadcrumbs" class=" py-0">
+        <v-breadcrumbs :items="breadcrumbs" class="py-0 ">
           <template v-slot:divider>
             <v-icon>mdi-forward</v-icon>
           </template>
@@ -25,16 +25,22 @@
                     <v-col cols="6" sm='6' md="2">
                       <v-select autocomplete :items="meses" item-value="nro" item-text="nombre" label="Mes" v-model="form.mes"></v-select>
                     </v-col>
-                    <v-col cols="12" md='3'>
+                    <v-col cols="6" sm='6' md="3">
+                        <v-menu v-model="form.menu2" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y min-width="290px">
+                            <template v-slot:activator="{ on, attrs }">
+                            <v-text-field v-model="form.fecha_envio" label="Fecha de la asesoria" prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on"></v-text-field>
+                            </template>
+                            <v-date-picker v-model="form.fecha_envio" @input="form.menu2 = false"></v-date-picker>
+                        </v-menu>
+                    </v-col>
+                    <v-col cols="12" md='6'>
                       <v-select @change="mostrar_docentes()" autocomplete :items="iiees" item-value="id" item-text="nombre" label="Iiee" v-model="form.iiee_id"> </v-select>
                     </v-col>
-                    <v-col cols="12" md='3'>
+                    <v-col cols="12" md='4'>
                       <v-select autocomplete :items="docentes" item-value="id" item-text="nombre" label="Docentes" v-model="form.docente_id"></v-select>
                     </v-col>
-                    <v-col cols="12" md='2'>
-                      <v-text-field v-model="form.fecha_envio" label="Fecha de registro" readonly></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md='2'>
+
+                    <v-col v-if="false" cols="12" md='2'>
                       <v-select autocomplete :items="estados" item-value="nro" item-text="nombre" label="Estado" v-model="form.estado"></v-select>
                     </v-col>
                     <v-col cols="12" md='2'>
@@ -137,15 +143,9 @@ export default {
       nro: 1,
       nombre: 'UNIDAD DE GESTION EDUCATIVA LOCAL'
     }],
-    iiees: [{
-      id: 1,
-      nombre: 'COLEGIO X'
-    }],
+    iiees: [],
 
-    docentes: [{
-      id: 1,
-      nombre: 'Docente X'
-    }],
+    docentes: [],
     estados: [{
       nro: 0,
       nombre: 'Registrado'
@@ -162,14 +162,15 @@ export default {
     }],
 
     form: {
+      menu2:false,
       anio: new Date().getFullYear(),
       mes: new Date().getMonth() + 1,
       estado: 0,
-      acompanante_id: 1,
+      acompanante_id: 0,
       iiee_id: 0,
       docente_id: 0,
-      fecha_envio: new Date().getDate() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getFullYear(),
-      hay_visita: 0,
+      fecha_envio: new Date().getFullYear() + '-' + (new Date().getMonth() + 1) + '-' + new Date().getDate(),
+      hay_visita: 1,
       asesoria_id: 0
     }
   }),
@@ -232,7 +233,7 @@ export default {
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.user.id,
           dni: res.user.dni,
-          nombre: res.user.id + ' ' + res.user.name,
+          nombre: res.user.dni + ' | ' + res.user.name,
           area_especializacion: res.area_especializacion,
           nivel_educativo: res.iiee.nivel,
         }));
@@ -243,6 +244,7 @@ export default {
     },
     async crearAsesoria() {
       try {
+      this.form.acompanante_id=this.usuarioLogeado;
         let rpt = await axios.post(`${this.endpoint}/api/v1/asesoria/store`, this.form);
         console.log(rpt.data);
         localStorage.setItem('asesoria_id', rpt.data);

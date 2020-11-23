@@ -69,7 +69,8 @@ export default {
           'txt_user': this.txt_user,
           'txt_pw': this.txt_pw
         }
-        if (this.login(user)) {
+        let legeado=await this.login(user);
+        if (legeado) {
           this.$router.push({
             name: 'admin'
           }).catch(() => {});
