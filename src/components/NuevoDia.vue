@@ -74,13 +74,13 @@
                   </v-menu>
                 </v-col>
                 <v-col cols="4" sm='4' md="2">
-                  <v-select v-model="form.nivel_educativo" :items="niveles_educativos" item-value="id" item-text="nombre" label="Nivel educativo" @change="MostrarGrados()" required></v-select>
+                  <v-select v-model="form.nivel_educativo" :items="niveles_educativos" item-value="id" item-text="nombre" label="Nivel educativo" @change="MostrarGrados()" required disabled></v-select>
                 </v-col>
                 <v-col cols="4" sm='4' md="4">
-                  <v-select v-model="form.grados" :items="grados" item-value="id" item-text="nombre" attach chips deletable-chips label="Grados" multiple></v-select>
+                  <v-select v-model="form.grados" :items="grados" item-value="id" item-text="nombre" attach chips deletable-chips label="Grados" multiple @change="verficarGrados()"></v-select>
                 </v-col>
                 <v-col cols="6" sm='6' md="8">
-                  <v-select v-model="form.area_curricular" :items="areas_curriculares" item-value="id" item-text="nombre" attach chips deletable-chips label="Area curricular" multiple></v-select>
+                  <v-select v-model="form.area_curricular" :items="areas_curriculares" item-value="id" item-text="nombre" attach chips deletable-chips label="Area curricular" multiple  @change="verficarAreas()"></v-select>
                 </v-col>
 
                 <v-col cols="12">
@@ -350,6 +350,7 @@ export default {
   props: ['dia', 'iieeid', 'userid', 'hayvisita', 'diaid', 'asesoriaid'],
   data() {
     return {
+      iieeid_:0,
       valid: false,
       vacioRules: [v => !!v || 'Este valor es requerido', v => v.length < 1 || 'Este valor es requerido'],
       dialog: false,
@@ -935,11 +936,8 @@ export default {
   },
   created() {
     // this.mostrar_grados();
-
     this.mostrarAsesoria();
-    if (this.diaid > 0) {
-      this.traerDia();
-    }
+
   },
   methods: {
     async traerDia() {
@@ -999,7 +997,7 @@ export default {
         this.competencias_guardado=true,
         this.criterios_guardado=true,
         this.form = await rpt_procesada1[0];
-        this.MostrarGrados();
+        // this.MostrarGrados();
         console.log('se trajo el dia', rpt_procesada1);
 
       } catch (error) {
@@ -1009,14 +1007,16 @@ export default {
     async MostrarGrados() {
       try {
         // Procesamos los grados del colegio
-        let rpt1 = await axios.get(`${this.endpoint}/api/v1/grados/${this.iieeid}/${this.form.nivel_educativo}`);
+        console.log('this.form.nivel_educativo:',this.form.nivel_educativo);
+        let rpt1 = await axios.get(`${this.endpoint}/api/v1/grados-/${this.asesoria.iiee.id}/${this.form.nivel_educativo}`);
 
+        console.log('grados en db con nivel:',rpt1.data);
         let rpt_procesada1 = await rpt1.data.map(res => ({
           id: res.id,
           nombre: res.nombre,
         }));
-        this.grados = rpt_procesada1;
-        // console.log('grados en db con nivel' + this.form.nivel_educativo, rpt_procesada1);
+        this.grados = await rpt_procesada1;
+        console.log('grados en db con nivel:' +this.iieeid+'_'+ this.form.nivel_educativo+':', rpt_procesada1);
 
         this.listarAreaCurricular();
       } catch (error) {
@@ -1045,6 +1045,11 @@ export default {
             this.form.nivel_educativo=this.asesoria.iiee.nivel;
             this.MostrarGrados()
         }
+        if (this.diaid > 0) {
+            await this.traerDia();
+        // this.form.nivel_educativo=this.asesoria.iiee.id;
+            await this.MostrarGrados()
+        }
       } catch (error) {
         console.log(error);
       }
@@ -1070,7 +1075,7 @@ export default {
         // console.log(rpt.data);
         let rpt_procesada = await rpt.data.map(res => ({
           id: res.id,
-          nombre: res.nivel + '->' + res.nombre
+          nombre: res.nombre
         }));
         this.areas_curriculares = rpt_procesada;
         // console.log(rpt_procesada);
@@ -1152,6 +1157,40 @@ export default {
     pasarModificarCriterios(){
         this.dialog1 = false;
         this.criterios_guardado=true;
+    },
+    verficar(){
+        let found = this.form.grados.find(element => element == 2);
+        console.log('found:',found);
+        if(found){
+            this.form.grados=this.grados;
+        }
+        // else if(found!='undefined'){
+        //     this.form.grados=[];
+
+        // }
+    },verficarGrados(){
+        let todos = this.grados.find(element => element.nombre == 'TODOS');
+        console.log('todos:',todos);
+        let found = this.form.grados.find(element => element == todos.id);
+        console.log('found:',found);
+        if(found){
+            this.form.grados=this.grados.map(res => res.id);
+        }
+        // else if(found!='undefined'){
+        //     this.form.grados=[];
+
+        // }
+    },verficarAreas(){
+        let todos = this.areas_curriculares.find(element => element.nombre == 'TODOS');
+        let found = this.form.area_curricular.find(element => element == todos.id);
+        console.log('found:',found);
+        if(found){
+            this.form.area_curricular=this.areas_curriculares.map(res => res.id);
+        }
+        // else if(found!='undefined'){
+        //     this.form.grados=[];
+
+        // }
     }
   }
 }
